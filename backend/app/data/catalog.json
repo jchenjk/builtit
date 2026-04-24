@@ -1,0 +1,269 @@
+{
+  "_meta": {
+    "currency": "USD",
+    "source": "Mock catalog modeled on typical Home Depot / Lowe's pricing as of 2026.",
+    "note": "Prices are illustrative for the MVP. In production, replace with a live data feed (Home Depot / Lowe's APIs or a paid lumber-pricing provider)."
+  },
+  "items": [
+    {
+      "id": "lumber.2x4.8ft.spf",
+      "name": "2x4 SPF Stud, 8 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "2x4",
+      "actual_inches": [1.5, 3.5],
+      "length_in": 96,
+      "unit": "each",
+      "price": 4.28,
+      "vendor": "Home Depot",
+      "url": "https://www.homedepot.com/p/2-in-x-4-in-x-96-in-Premium-Kiln-Dried-Whitewood-Stud-058449/100037455"
+    },
+    {
+      "id": "lumber.2x4.10ft.spf",
+      "name": "2x4 SPF Stud, 10 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "2x4",
+      "actual_inches": [1.5, 3.5],
+      "length_in": 120,
+      "unit": "each",
+      "price": 6.18,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "lumber.2x6.8ft.spf",
+      "name": "2x6 SPF, 8 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "2x6",
+      "actual_inches": [1.5, 5.5],
+      "length_in": 96,
+      "unit": "each",
+      "price": 7.85,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "lumber.2x6.10ft.spf",
+      "name": "2x6 SPF, 10 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "2x6",
+      "actual_inches": [1.5, 5.5],
+      "length_in": 120,
+      "unit": "each",
+      "price": 10.42,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "lumber.4x4.8ft.treated",
+      "name": "4x4 Pressure-Treated Post, 8 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "4x4",
+      "actual_inches": [3.5, 3.5],
+      "length_in": 96,
+      "unit": "each",
+      "price": 14.97,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "lumber.1x12.8ft.pine",
+      "name": "1x12 Pine Board, 8 ft (common shelf board)",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "1x12",
+      "actual_inches": [0.75, 11.25],
+      "length_in": 96,
+      "unit": "each",
+      "price": 24.98,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "lumber.1x12.6ft.pine",
+      "name": "1x12 Pine Board, 6 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "1x12",
+      "actual_inches": [0.75, 11.25],
+      "length_in": 72,
+      "unit": "each",
+      "price": 19.40,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "lumber.1x4.8ft.pine",
+      "name": "1x4 Pine Board, 8 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "1x4",
+      "actual_inches": [0.75, 3.5],
+      "length_in": 96,
+      "unit": "each",
+      "price": 7.62,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "panel.plywood.0.5in.4x8.sanded",
+      "name": "1/2 in. Sanded Plywood 4 ft x 8 ft",
+      "category": "panel",
+      "kind": "sheet",
+      "thickness_in": 0.5,
+      "sheet_in": [48, 96],
+      "unit": "each",
+      "price": 42.18,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "panel.plywood.0.75in.4x8",
+      "name": "3/4 in. Plywood 4 ft x 8 ft (desk/cabinet grade)",
+      "category": "panel",
+      "kind": "sheet",
+      "thickness_in": 0.75,
+      "sheet_in": [48, 96],
+      "unit": "each",
+      "price": 58.97,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "panel.osb.7-16in.4x8",
+      "name": "7/16 in. OSB Sheathing 4 ft x 8 ft",
+      "category": "panel",
+      "kind": "sheet",
+      "thickness_in": 0.4375,
+      "sheet_in": [48, 96],
+      "unit": "each",
+      "price": 19.65,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "roofing.shingles.bundle",
+      "name": "Asphalt Shingles, 33.3 sq ft bundle",
+      "category": "roofing",
+      "kind": "coverage",
+      "coverage_sqft": 33.3,
+      "unit": "bundle",
+      "price": 32.50,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "roofing.felt.15lb.roll",
+      "name": "15 lb Roofing Felt, 432 sq ft roll",
+      "category": "roofing",
+      "kind": "coverage",
+      "coverage_sqft": 432,
+      "unit": "roll",
+      "price": 28.97,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "fastener.screws.deck.3in.5lb",
+      "name": "3 in. Exterior Deck Screws, 5 lb (~325 ct)",
+      "category": "fastener",
+      "kind": "count",
+      "count_per_unit": 325,
+      "unit": "box",
+      "price": 26.98,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "fastener.screws.wood.1.25in.1lb",
+      "name": "1-1/4 in. Wood Screws, 1 lb (~190 ct)",
+      "category": "fastener",
+      "kind": "count",
+      "count_per_unit": 190,
+      "unit": "box",
+      "price": 9.97,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "fastener.screws.wood.2in.1lb",
+      "name": "2 in. Wood Screws, 1 lb (~125 ct)",
+      "category": "fastener",
+      "kind": "count",
+      "count_per_unit": 125,
+      "unit": "box",
+      "price": 11.47,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "fastener.nails.framing.16d.5lb",
+      "name": "16d Framing Nails, 5 lb (~150 ct)",
+      "category": "fastener",
+      "kind": "count",
+      "count_per_unit": 150,
+      "unit": "box",
+      "price": 14.50,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "fastener.nails.roofing.1.25in.1lb",
+      "name": "1-1/4 in. Roofing Nails, 1 lb (~140 ct)",
+      "category": "fastener",
+      "kind": "count",
+      "count_per_unit": 140,
+      "unit": "box",
+      "price": 6.98,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "hardware.hinge.3.5in.pair",
+      "name": "3-1/2 in. Door Hinge (pair)",
+      "category": "hardware",
+      "kind": "count",
+      "count_per_unit": 2,
+      "unit": "pair",
+      "price": 5.97,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "hardware.handle.barn",
+      "name": "Barn-style Door Handle",
+      "category": "hardware",
+      "kind": "count",
+      "count_per_unit": 1,
+      "unit": "each",
+      "price": 12.98,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "hardware.bracket.shelf.pair",
+      "name": "Heavy Duty Shelf Bracket (pair)",
+      "category": "hardware",
+      "kind": "count",
+      "count_per_unit": 2,
+      "unit": "pair",
+      "price": 8.47,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "finish.woodglue.16oz",
+      "name": "Wood Glue, 16 oz",
+      "category": "finish",
+      "kind": "count",
+      "count_per_unit": 1,
+      "unit": "bottle",
+      "price": 7.48,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "finish.sandpaper.assorted",
+      "name": "Sandpaper, assorted grit pack (10 sheets)",
+      "category": "finish",
+      "kind": "count",
+      "count_per_unit": 10,
+      "unit": "pack",
+      "price": 9.98,
+      "vendor": "Home Depot"
+    },
+    {
+      "id": "finish.polyurethane.qt",
+      "name": "Polyurethane Clear Finish, Quart",
+      "category": "finish",
+      "kind": "coverage",
+      "coverage_sqft": 150,
+      "unit": "quart",
+      "price": 18.98,
+      "vendor": "Home Depot"
+    }
+  ]
+}
