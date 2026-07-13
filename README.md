@@ -94,10 +94,54 @@ python -m pytest app/tests --basetemp=/tmp/pyt
 | GET | `/api/projects` | List project templates with parameter schemas |
 | GET | `/api/projects/{id}` | Get one project's schema |
 | POST | `/api/projects/{id}/generate` | Generate a complete build. Body: `{"parameters": {...}}` |
+| GET | `/api/prices/status` | Whether live Home Depot pricing is configured |
+| POST | `/api/prices/live` | Live Home Depot quotes. Body: `{"catalog_ids": [...], "zip_code": "04401"}` |
 
 The `generate` response has these top-level keys:
 `project`, `parameters`, `model_3d`, `cuts`, `panels`, `shopping_list`,
 `instructions`, `notes`.
+
+## Live Home Depot pricing
+
+The shopping list can pull today's real Home Depot prices via
+[SerpApi's Home Depot API](https://serpapi.com/home-depot-search-api)
+(scraping homedepot.com directly is blocked by bot protection and against
+their ToS — SerpApi handles that legally and reliably).
+
+Setup:
+1. Create a SerpApi account (free tier: 100 searches/month) and copy your key.
+2. Set the environment variable: `export SERPAPI_KEY=your_key_here`
+3. Restart the server. The "Get live prices" button in the Shopping List tab
+   goes live; users can enter a ZIP code for local-store pricing.
+
+How it works (`backend/app/services/pricing.py`):
+- Each catalog item has a tuned Home Depot search query.
+- Queries run concurrently; the best-matching priced result is picked by
+  token overlap against the query.
+- Results are cached in-memory for 6 hours to conserve API credits
+  (one full shed build ≈ 15 searches, cached afterwards).
+- **Graceful fallback**: no key, an API error, or no match → that item shows
+  the built-in catalog price instead. The app never breaks.
+
+To add another vendor later (Lowe's, Ace), add a provider function in
+`pricing.py` following `_serpapi_quote` and merge its quotes.
+
+## Deploying to Render
+
+The repo includes `render.yaml` — FastAPI serves the frontend too, so it's a
+single free-tier service:
+
+1. Push this repo to GitHub.
+2. In [Render](https://render.com): **New → Blueprint**, pick the repo.
+   Render reads `render.yaml` and configures everything.
+3. (Optional) Add your `SERPAPI_KEY` under **Environment** to enable live pricing.
+4. Deploy. Your app is at `https://builtit.onrender.com` (or similar).
+
+Notes:
+- Free tier sleeps after 15 min idle; first request after that takes ~30s.
+  Upgrade to Starter ($7/mo) to keep it always-on.
+- The in-memory price cache resets on each deploy/restart — fine for now;
+  move to Redis or a DB table if credit usage becomes an issue.
 
 ## How the cut optimizer works
 

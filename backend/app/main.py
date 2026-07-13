@@ -1,13 +1,16 @@
 """FastAPI app: DIY Builder backend."""
+import os
 from dataclasses import asdict
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 from typing import Any
 
 from .models import ALL_MODELS
 from .services.cutlist import build_shopping_list
 from .services.instructions import generate_instructions
+from .services.pricing import get_live_prices, live_pricing_available
 
 app = FastAPI(
     title="DIY Builder API",
@@ -78,6 +81,31 @@ def generate(project_id: str, req: GenerateRequest):
     }
 
 
+class LivePricesRequest(BaseModel):
+    catalog_ids: list[str]
+    zip_code: str | None = Field(default=None, pattern=r"^\d{5}$")
+
+
+@app.get("/api/prices/status")
+def prices_status():
+    """Whether live Home Depot pricing is configured (SERPAPI_KEY set)."""
+    return {"live_enabled": live_pricing_available()}
+
+
+@app.post("/api/prices/live")
+async def live_prices(req: LivePricesRequest):
+    """Fetch live Home Depot quotes for shopping-list items.
+
+    Falls back to built-in catalog prices per-item when live lookup fails
+    or no SERPAPI_KEY is configured.
+    """
+    if not req.catalog_ids:
+        raise HTTPException(400, "catalog_ids must not be empty")
+    if len(req.catalog_ids) > 40:
+        raise HTTPException(400, "Too many items (max 40)")
+    return await get_live_prices(req.catalog_ids, req.zip_code)
+
+
 def _bbox(parts):
     if not parts:
         return {"min": [0, 0, 0], "max": [1, 1, 1]}
@@ -86,3 +114,10 @@ def _bbox(parts):
     zs = [p.z for p in parts] + [p.z + p.dz for p in parts]
     return {"min": [min(xs), min(ys), min(zs)],
             "max": [max(xs), max(ys), max(zs)]}
+
+
+# Serve the frontend from the same process in production (Render, etc.).
+# Mounted last so /api/* routes take priority.
+_FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "frontend")
+if os.path.isdir(_FRONTEND_DIR):
+    app.mount("/", StaticFiles(directory=_FRONTEND_DIR, html=True), name="frontend")
