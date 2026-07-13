@@ -45,6 +45,15 @@ def generate_instructions(project_id: str, build, shopping_list: dict) -> dict:
             "Utility knife (for shingles and felt)",
             "4-ft level",
         ]
+    elif project_id == "nightstand":
+        steps = _nightstand_steps(build, shopping_list)
+        tools = COMMON_TOOLS + ["Square (for checking 90° corners)"]
+    elif project_id == "patio_stand":
+        steps = _patio_stand_steps(build, shopping_list)
+        tools = COMMON_TOOLS + ["Exterior wood sealer + brush"]
+    elif project_id == "bedframe":
+        steps = _bedframe_steps(build, shopping_list)
+        tools = COMMON_TOOLS + ["Sander (or sanding block)", "A helper for final assembly"]
     else:
         steps = []
         tools = COMMON_TOOLS
@@ -153,6 +162,108 @@ def _desk_steps(build, shopping_list) -> list[dict]:
               "Wipe down with a tack cloth. Apply 2-3 coats of polyurethane to the tabletop "
               "(it'll see coffee, mouse pads, sweaty palms). One coat on legs and aprons is fine.",
               est_min=60),
+    ]
+
+
+def _nightstand_steps(build, shopping_list) -> list[dict]:
+    h = build.assembly_hints
+    horiz = 2 + (1 if h["include_shelf"] else 0)
+    return [
+        _step(1, "Cut all parts",
+              f"Cut 2 side panels at {h['height_in']:.0f} in. and {horiz} horizontal pieces at "
+              f"{(h['width_in'] - 1.5):.2f} in. Use a stop block so the horizontal pieces come "
+              "out identical — that's what makes the cabinet square.",
+              est_min=25),
+        _step(2, "Sand everything",
+              "120 grit then 220 grit on every face and edge. Small projects like this get "
+              "looked at up close, so the sanding matters more than usual.",
+              est_min=25),
+        _step(3, "Assemble the box",
+              "Glue and screw the bottom between the sides (3 pilot holes + screws per joint), "
+              "then the top. Keep the front edges flush.",
+              est_min=25),
+        _step(4, "Add the mid shelf" if h["include_shelf"] else "Check for square",
+              ("Mark the shelf position on both sides (about 55% of the way up works well for a "
+               "cubby), then glue, pre-drill, and screw it in place.")
+              if h["include_shelf"]
+              else "Measure corner-to-corner diagonals; equal diagonals = square cabinet.",
+              est_min=15),
+        _step(5, "Attach the back panel" if h["include_back"] else "Tighten and inspect",
+              ("Lay the cabinet face-down, set the plywood back flush with all edges, and screw "
+               "every ~6 in. around the perimeter. This squares and stiffens the whole piece.")
+              if h["include_back"]
+              else "Tighten any proud screws and check the joints.",
+              est_min=15),
+        _step(6, "Finish",
+              "Wipe off dust and finish. Stain + two coats of polyurethane looks store-bought; "
+              "the top will see water glasses, so don't skip the poly there.",
+              est_min=40),
+    ]
+
+
+def _patio_stand_steps(build, shopping_list) -> list[dict]:
+    h = build.assembly_hints
+    return [
+        _step(1, "Cut the frame parts",
+              f"Cut 2 back posts at {h['total_height_in']:.0f} in., the shorter front and tier "
+              f"posts, {h['tiers'] * 2} bearers at {h['tier_depth_in']:.0f} in., and "
+              f"{h['tiers'] * 2} cross rails. Label each piece with pencil as you go.",
+              est_min=35),
+        _step(2, "Cut the slats",
+              f"Cut {h['tiers'] * h['n_slats']} slats at {h['width_in']:.0f} in. Stack-cut or "
+              "use a stop block so they're identical.",
+              est_min=20),
+        _step(3, "Build the two side frames",
+              "Lay out one side flat: back post, tier posts, and a bearer per tier — each bearer "
+              "level and at its tier height. Glue and drive 2 deck screws per joint. Build the "
+              "second side as a MIRROR of the first (easy to get wrong — double-check).",
+              est_min=40),
+        _step(4, "Connect the sides",
+              "Stand both side frames up and join them with the cross rails at the front and "
+              "back of each tier. Check for square, then snug all screws.",
+              est_min=25),
+        _step(5, "Attach the slats",
+              f"Lay {h['n_slats']} slats per tier with ~1/2 in. gaps (use a scrap spacer). "
+              "Two screws per slat end. The gaps let water drain — don't butt them tight.",
+              est_min=30),
+        _step(6, "Seal it",
+              "Sand off splinters, then apply exterior sealer or deck stain on every surface, "
+              "including end grain. Re-coat once a year and this will outlive the plants.",
+              est_min=40),
+    ]
+
+
+def _bedframe_steps(build, shopping_list) -> list[dict]:
+    h = build.assembly_hints
+    return [
+        _step(1, "Cut all parts",
+              f"Cut 2 side rails at {h['frame_length_in']:.1f} in., head/foot rails, 4 legs at "
+              f"{h['leg_height_in']:.2f} in., cleats, and {h['n_slats']} slats. "
+              + ("Also cut the center beam and its leg. " if h["center_beam"] else "")
+              + "Accuracy on the rails matters most — measure twice.",
+              est_min=50),
+        _step(2, "Sand the visible parts",
+              "Rails and legs get seen; sand them to 220. Slats and cleats just need a "
+              "once-over with 120 to knock down splinters.",
+              est_min=30),
+        _step(3, "Attach legs to the side rails",
+              "Clamp a leg flush with the end of a side rail, top edges flush. Glue + 4 deck "
+              "screws in a square pattern. Repeat at all four corners.",
+              est_min=30),
+        _step(4, "Complete the rectangle",
+              "Stand the two side-rail assemblies parallel and screw the head and foot rails "
+              "between them into the legs. Measure both diagonals — equal means square.",
+              est_min=25),
+        _step(5, "Install cleats" + (" and center beam" if h["center_beam"] else ""),
+              "Screw a cleat along the inside of each side rail, flush with the bottom of the "
+              "rail's top edge minus slat thickness, so slats sit flush with the rail tops. "
+              + ("Install the center beam head-to-foot with its leg at midspan."
+                 if h["center_beam"] else ""),
+              est_min=25),
+        _step(6, "Lay the slats",
+              f"Space the {h['n_slats']} slats evenly (~2-3 in. gaps). Screw down the end slats "
+              "and every third one; the rest can float. Done — drop the mattress on.",
+              est_min=20),
     ]
 
 

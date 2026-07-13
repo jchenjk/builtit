@@ -53,7 +53,7 @@
 
   <!-- 3D model showcase -->
   <section id="projects" class="max-w-6xl mx-auto px-5 py-14">
-    <h2 class="text-2xl sm:text-3xl font-extrabold text-center tracking-tight">Three projects, fully customizable</h2>
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-center tracking-tight">Six projects, fully customizable</h2>
     <p class="text-center text-stone-500 mt-2 mb-10">Real 3D previews — the same models the app generates. Drag to spin them.</p>
     <div class="grid sm:grid-cols-3 gap-6">
       <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
@@ -70,6 +70,30 @@
           <div class="font-bold">Simple Desk</div>
           <div class="text-sm text-stone-500 mt-1">4x4 legs, 1x4 aprons, plywood top. Sized to your room.</div>
           <div class="text-sm font-semibold text-orange-600 mt-2 num">~$180–250</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+        <canvas id="m-nightstand" class="w-full block cursor-grab" style="height:240px"></canvas>
+        <div class="p-5">
+          <div class="font-bold">Nightstand</div>
+          <div class="text-sm text-stone-500 mt-1">Compact bedside cabinet with an open cubby shelf.</div>
+          <div class="text-sm font-semibold text-orange-600 mt-2 num">~$60–120</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+        <canvas id="m-bedframe" class="w-full block cursor-grab" style="height:240px"></canvas>
+        <div class="p-5">
+          <div class="font-bold">Platform Bed Frame</div>
+          <div class="text-sm text-stone-500 mt-1">2x6 rails, 4x4 legs, slats — no box spring needed.</div>
+          <div class="text-sm font-semibold text-orange-600 mt-2 num">~$160–240</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+        <canvas id="m-patio" class="w-full block cursor-grab" style="height:240px"></canvas>
+        <div class="p-5">
+          <div class="font-bold">Patio Plant Stand</div>
+          <div class="text-sm text-stone-500 mt-1">Tiered outdoor stand with slatted shelves.</div>
+          <div class="text-sm font-semibold text-orange-600 mt-2 num">~$90–150</div>
         </div>
       </div>
       <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
@@ -226,8 +250,54 @@
     })();
   }
 
+  function buildNightstand(g) {
+    const W = 18, H = 24, D = 11, t = 0.75;
+    box(g, WOOD, 0, 0, 0, t, H, D);
+    box(g, WOOD, W - t, 0, 0, t, H, D);
+    box(g, WOOD_LIGHT, t, 2, 0, W - 2 * t, t, D);        // bottom
+    box(g, WOOD_LIGHT, t, H - t, 0, W - 2 * t, t, D);    // top
+    box(g, WOOD_LIGHT, t, H * 0.55, 0, W - 2 * t, t, D); // shelf
+    box(g, PANEL, 0, 0, D, W, H, 0.25);                  // back
+    return [W, H, D];
+  }
+
+  function buildBedframe(g) {
+    const W = 63, L = 84, legH = 13, railW = 5.5, t = 1.5, leg = 3.5;
+    for (const [x, z] of [[0,0],[W-leg,0],[0,L-leg],[W-leg,L-leg]])
+      box(g, WOOD_DARK, x, 0, z, leg, legH, leg);
+    box(g, WOOD, 0, legH - railW, 0, t, railW, L);       // side rails
+    box(g, WOOD, W - t, legH - railW, 0, t, railW, L);
+    box(g, WOOD, t, legH - railW, 0, W - 2 * t, railW, t);
+    box(g, WOOD, t, legH - railW, L - t, W - 2 * t, railW, t);
+    for (let i = 0; i < 13; i++)                          // slats
+      box(g, WOOD_LIGHT, t, legH, t + i * (L - 2 * t - 3.5) / 12, W - 2 * t, 0.75, 3.5);
+    return [W, legH + 1, L];
+  }
+
+  function buildPatioStand(g) {
+    const W = 36, tiers = 3, TD = 11, RISE = 10, t = 1.5, fw = 3.5;
+    const totalD = tiers * TD, totalH = tiers * RISE + t;
+    for (const x of [0, W - t]) {
+      box(g, WOOD_DARK, x, 0, totalD - fw, t, totalH, fw);          // back post
+      for (let tr = 1; tr <= tiers; tr++) {
+        const y = totalD - tr * TD;
+        box(g, WOOD_DARK, x, 0, y, t, RISE * tr, fw);               // tier post
+        box(g, WOOD, x, RISE * tr, y, t, t, TD);                    // bearer
+      }
+    }
+    for (let tr = 1; tr <= tiers; tr++) {                            // slats
+      const y0 = totalD - tr * TD;
+      for (let s = 0; s < 3; s++)
+        box(g, WOOD_LIGHT, 0, RISE * tr + t, y0 + s * 4, W, 0.75, 3.5);
+    }
+    return [W, totalH, totalD];
+  }
+
   viewer('m-bookshelf', buildBookshelf);
   viewer('m-desk', buildDesk);
+  viewer('m-nightstand', buildNightstand);
+  viewer('m-bedframe', buildBedframe);
+  viewer('m-patio', buildPatioStand);
   viewer('m-shed', buildShed);
   </script>
 </body>

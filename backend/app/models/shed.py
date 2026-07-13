@@ -148,21 +148,56 @@ class ShedModel(ProjectModel):
         # Wood screws for trim/door
         b.hardware.append(HardwareNeed("fastener.screws.wood.2in.1lb", 2))
 
-        # --- 3D preview (very schematic — boxes for walls, roof prisms) ---
-        # Floor
-        b.parts_3d.append(Part3D("Floor", 0, 0, 0, W, D, 1.5, "#a87b4f"))
-        # Walls (as thin slabs)
-        b.parts_3d.append(Part3D("Front wall", 0, 0, 1.5, W, STUD_T, WH, "#c69c6d"))
-        b.parts_3d.append(Part3D("Back wall", 0, D - STUD_T, 1.5, W, STUD_T, WH, "#c69c6d"))
-        b.parts_3d.append(Part3D("Left wall", 0, STUD_T, 1.5, STUD_T, D - 2 * STUD_T, WH, "#c69c6d"))
-        b.parts_3d.append(Part3D("Right wall", W - STUD_T, STUD_T, 1.5, STUD_T, D - 2 * STUD_T, WH, "#c69c6d"))
-        # Roof — represent as two thin rotated slabs approximated as a peaked prism via two boxes:
-        # We'll add two slabs offset slightly to fake a gable in the box-only viewer.
-        # The frontend will render these in the same style.
-        b.parts_3d.append(Part3D("Roof L", -3, 0, 1.5 + WH,
-                                 W / 2 + 3, D, max(SHEATH_T, 1.0), "#5a3d2b"))
-        b.parts_3d.append(Part3D("Roof R", W / 2, 0, 1.5 + WH,
-                                 W / 2 + 3, D, max(SHEATH_T, 1.0), "#5a3d2b"))
+        # --- 3D preview (schematic — axis-aligned boxes only) ---
+        # Skids + floor
+        b.parts_3d.append(Part3D("Skid L", W * 0.15, 0, 0, 3.5, D, 3.5, "#6b4f3a"))
+        b.parts_3d.append(Part3D("Skid R", W * 0.85 - 3.5, 0, 0, 3.5, D, 3.5, "#6b4f3a"))
+        FLOOR_Z = 3.5
+        b.parts_3d.append(Part3D("Floor", 0, 0, FLOOR_Z, W, D, 1.5, "#a87b4f"))
+        wall_z = FLOOR_Z + 1.5
+        # Walls (as thin slabs); front wall gets a door opening (two segments + header)
+        door_x0 = (W - DOOR_W) / 2
+        door_h = WH - STUD_T - 2
+        b.parts_3d.append(Part3D("Front wall L", 0, 0, wall_z, door_x0, STUD_T, WH, "#c69c6d"))
+        b.parts_3d.append(Part3D("Front wall R", door_x0 + DOOR_W, 0, wall_z,
+                                 W - door_x0 - DOOR_W, STUD_T, WH, "#c69c6d"))
+        b.parts_3d.append(Part3D("Door header", door_x0, 0, wall_z + door_h,
+                                 DOOR_W, STUD_T, WH - door_h, "#c69c6d"))
+        b.parts_3d.append(Part3D("Door", door_x0 + 1, -0.75, wall_z,
+                                 DOOR_W - 2, 0.75, door_h, "#8b5a2b"))
+        b.parts_3d.append(Part3D("Back wall", 0, D - STUD_T, wall_z, W, STUD_T, WH, "#c69c6d"))
+        b.parts_3d.append(Part3D("Left wall", 0, STUD_T, wall_z, STUD_T, D - 2 * STUD_T, WH, "#c69c6d"))
+        b.parts_3d.append(Part3D("Right wall", W - STUD_T, STUD_T, wall_z, STUD_T, D - 2 * STUD_T, WH, "#c69c6d"))
+        # Gable ends: stacked, narrowing slabs up to the ridge
+        top_z = wall_z + WH
+        GABLE_STEPS = 6
+        for i in range(GABLE_STEPS):
+            frac0 = i / GABLE_STEPS
+            step_h = rise / GABLE_STEPS
+            inset = run * frac0
+            width_i = W - 2 * inset
+            if width_i <= 4:
+                continue
+            for yy, label in ((0, "Front gable"), (D - STUD_T, "Back gable")):
+                b.parts_3d.append(Part3D(f"{label} {i+1}", inset, yy, top_z + i * step_h,
+                                         width_i, STUD_T, step_h, "#b58b62"))
+        # Pitched roof: stair-stepped slabs climbing to the ridge on both sides
+        ROOF_STEPS = 8
+        step_run = (run + 4) / ROOF_STEPS   # +4" eave overhang
+        step_rise = rise / ROOF_STEPS
+        roof_t = 1.6
+        for i in range(ROOF_STEPS):
+            x_off = -4 + i * step_run
+            z_off = top_z - 2 + i * step_rise
+            # Left slope
+            b.parts_3d.append(Part3D(f"Roof L{i+1}", x_off, -2, z_off,
+                                     step_run + 1.5, D + 4, roof_t, "#57534e"))
+            # Right slope (mirror)
+            b.parts_3d.append(Part3D(f"Roof R{i+1}", W - x_off - step_run - 1.5, -2, z_off,
+                                     step_run + 1.5, D + 4, roof_t, "#57534e"))
+        # Ridge cap
+        b.parts_3d.append(Part3D("Ridge", W / 2 - 2, -2, top_z + rise - 1,
+                                 4, D + 4, 2, "#44403c"))
 
         b.notes.append("Check local building codes — many areas allow sheds under ~120 sq ft permit-free, but always verify.")
         b.notes.append("Set the foundation skids on a level gravel pad. A level shed lasts decades; an unlevel one racks and sags.")

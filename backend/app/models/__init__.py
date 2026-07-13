@@ -15,5 +15,11 @@ emit instructions.
 from .bookshelf import BookshelfModel
 from .desk import DeskModel
 from .shed import ShedModel
+from .nightstand import NightstandModel
+from .patiostand import PatioStandModel
+from .bedframe import BedFrameModel
 
-ALL_MODELS = {m.id: m for m in [BookshelfModel, DeskModel, ShedModel]}
+ALL_MODELS = {m.id: m for m in [
+    BookshelfModel, DeskModel, NightstandModel,
+    BedFrameModel, PatioStandModel, ShedModel,
+]}
