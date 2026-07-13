@@ -11,7 +11,10 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "2x4",
-      "actual_inches": [1.5, 3.5],
+      "actual_inches": [
+        1.5,
+        3.5
+      ],
       "length_in": 96,
       "unit": "each",
       "price": 4.28,
@@ -24,7 +27,10 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "2x4",
-      "actual_inches": [1.5, 3.5],
+      "actual_inches": [
+        1.5,
+        3.5
+      ],
       "length_in": 120,
       "unit": "each",
       "price": 6.18,
@@ -36,7 +42,10 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "2x6",
-      "actual_inches": [1.5, 5.5],
+      "actual_inches": [
+        1.5,
+        5.5
+      ],
       "length_in": 96,
       "unit": "each",
       "price": 7.85,
@@ -48,7 +57,10 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "2x6",
-      "actual_inches": [1.5, 5.5],
+      "actual_inches": [
+        1.5,
+        5.5
+      ],
       "length_in": 120,
       "unit": "each",
       "price": 10.42,
@@ -60,11 +72,30 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "4x4",
-      "actual_inches": [3.5, 3.5],
+      "actual_inches": [
+        3.5,
+        3.5
+      ],
       "length_in": 96,
       "unit": "each",
       "price": 14.97,
       "vendor": "Home Depot"
+    },
+    {
+      "id": "lumber.2x6.8ft.treated",
+      "name": "2x6 Pressure-Treated, 8 ft",
+      "category": "lumber",
+      "kind": "board",
+      "nominal": "2x6pt",
+      "actual_inches": [
+        1.5,
+        5.5
+      ],
+      "length_in": 96,
+      "unit": "each",
+      "price": 9.87,
+      "vendor": "Home Depot",
+      "url": "https://www.homedepot.com/b/Lumber-Composites-Pressure-Treated-Lumber/N-5yc1vZbqm9"
     },
     {
       "id": "lumber.1x12.8ft.pine",
@@ -72,7 +103,10 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "1x12",
-      "actual_inches": [0.75, 11.25],
+      "actual_inches": [
+        0.75,
+        11.25
+      ],
       "length_in": 96,
       "unit": "each",
       "price": 24.98,
@@ -84,10 +118,13 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "1x12",
-      "actual_inches": [0.75, 11.25],
+      "actual_inches": [
+        0.75,
+        11.25
+      ],
       "length_in": 72,
       "unit": "each",
-      "price": 19.40,
+      "price": 19.4,
       "vendor": "Home Depot"
     },
     {
@@ -96,7 +133,10 @@
       "category": "lumber",
       "kind": "board",
       "nominal": "1x4",
-      "actual_inches": [0.75, 3.5],
+      "actual_inches": [
+        0.75,
+        3.5
+      ],
       "length_in": 96,
       "unit": "each",
       "price": 7.62,
@@ -108,7 +148,10 @@
       "category": "panel",
       "kind": "sheet",
       "thickness_in": 0.5,
-      "sheet_in": [48, 96],
+      "sheet_in": [
+        48,
+        96
+      ],
       "unit": "each",
       "price": 42.18,
       "vendor": "Home Depot"
@@ -119,7 +162,10 @@
       "category": "panel",
       "kind": "sheet",
       "thickness_in": 0.75,
-      "sheet_in": [48, 96],
+      "sheet_in": [
+        48,
+        96
+      ],
       "unit": "each",
       "price": 58.97,
       "vendor": "Home Depot"
@@ -130,7 +176,10 @@
       "category": "panel",
       "kind": "sheet",
       "thickness_in": 0.4375,
-      "sheet_in": [48, 96],
+      "sheet_in": [
+        48,
+        96
+      ],
       "unit": "each",
       "price": 19.65,
       "vendor": "Home Depot"
@@ -142,7 +191,7 @@
       "kind": "coverage",
       "coverage_sqft": 33.3,
       "unit": "bundle",
-      "price": 32.50,
+      "price": 32.5,
       "vendor": "Home Depot"
     },
     {
@@ -192,7 +241,7 @@
       "kind": "count",
       "count_per_unit": 150,
       "unit": "box",
-      "price": 14.50,
+      "price": 14.5,
       "vendor": "Home Depot"
     },
     {

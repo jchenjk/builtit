@@ -29,8 +29,10 @@ class ShedModel(ProjectModel):
         ParamSpec("roof_pitch", "Roof pitch (rise per 12 in. run)", "number", 4,
                   min_val=3, max_val=8, step=1, unit="/12",
                   help="A 4/12 pitch is gentle and easy to walk on."),
-        ParamSpec("door_width_in", "Door width", "number", 36,
-                  min_val=30, max_val=48, step=2, unit="in"),
+        ParamSpec("door_width_in", "Door opening width", "number", 36,
+                  min_val=30, max_val=72, step=2, unit="in",
+                  help="Go 48+ if you'll wheel in a mower; use double doors past 48."),
+        ParamSpec("double_door", "Double doors (barn style)", "boolean", False),
     ]
 
     @classmethod
@@ -41,6 +43,7 @@ class ShedModel(ProjectModel):
         WH = p["wall_height_in"]
         PITCH = p["roof_pitch"]
         DOOR_W = p["door_width_in"]
+        DOUBLE = p["double_door"] or DOOR_W > 48  # wide openings need two leaves
 
         STUD_T = 1.5    # 2x4 actual
         STUD_W = 3.5
@@ -127,17 +130,20 @@ class ShedModel(ProjectModel):
                                        notes="Asphalt 3-tab shingles."))
         b.hardware.append(HardwareNeed("fastener.nails.roofing.1.25in.1lb", 1))
 
-        # --- Door ---
-        # Door = OSB on a 2x4 frame
-        # Frame: 2 stiles (full height) + 2 rails (door width - 2*STUD_W)
+        # --- Door(s) ---
+        # Each door leaf = OSB on a 2x4 frame (2 stiles + 2 rails + diagonal brace)
         DOOR_H = WH - STUD_T - 2  # leave a gap above
-        b.cuts.append(Cut("Door stile", "2x4", DOOR_H, qty=2))
-        b.cuts.append(Cut("Door rail", "2x4", DOOR_W - 2 * STUD_W, qty=2))
+        n_leaves = 2 if DOUBLE else 1
+        leaf_w = (DOOR_W - 1) / 2 if DOUBLE else DOOR_W  # 1" center gap for double
+        b.cuts.append(Cut("Door stile", "2x4", DOOR_H, qty=2 * n_leaves))
+        b.cuts.append(Cut("Door rail", "2x4", leaf_w - 2 * STUD_W, qty=2 * n_leaves))
+        b.cuts.append(Cut("Door diagonal brace", "2x4", DOOR_H * 0.9, qty=n_leaves,
+                          notes="Cut to fit corner-to-corner inside the leaf frame; stops sagging."))
         b.panels.append(PanelCut("Door panel", thickness_in=SHEATH_T,
-                                 length_in=DOOR_H, width_in=DOOR_W, qty=1))
-        b.hardware.append(HardwareNeed("hardware.hinge.3.5in.pair", 2,
-                                       notes="2 pairs (4 hinges) for a sturdy shed door."))
-        b.hardware.append(HardwareNeed("hardware.handle.barn", 1))
+                                 length_in=DOOR_H, width_in=leaf_w, qty=n_leaves))
+        b.hardware.append(HardwareNeed("hardware.hinge.3.5in.pair", 2 * n_leaves,
+                                       notes=f"2 pairs (4 hinges) per door leaf, {n_leaves} leaf/leaves."))
+        b.hardware.append(HardwareNeed("hardware.handle.barn", n_leaves))
 
         # --- Fasteners overall ---
         # Framing nails for studs/plates/rafters
@@ -163,8 +169,15 @@ class ShedModel(ProjectModel):
                                  W - door_x0 - DOOR_W, STUD_T, WH, "#c69c6d"))
         b.parts_3d.append(Part3D("Door header", door_x0, 0, wall_z + door_h,
                                  DOOR_W, STUD_T, WH - door_h, "#c69c6d"))
-        b.parts_3d.append(Part3D("Door", door_x0 + 1, -0.75, wall_z,
-                                 DOOR_W - 2, 0.75, door_h, "#8b5a2b"))
+        if DOUBLE:
+            lw = (DOOR_W - 1) / 2
+            b.parts_3d.append(Part3D("Door L", door_x0 + 0.5, -0.75, wall_z,
+                                     lw - 1, 0.75, door_h, "#8b5a2b"))
+            b.parts_3d.append(Part3D("Door R", door_x0 + lw + 1.5, -0.75, wall_z,
+                                     lw - 1, 0.75, door_h, "#8b5a2b"))
+        else:
+            b.parts_3d.append(Part3D("Door", door_x0 + 1, -0.75, wall_z,
+                                     DOOR_W - 2, 0.75, door_h, "#8b5a2b"))
         b.parts_3d.append(Part3D("Back wall", 0, D - STUD_T, wall_z, W, STUD_T, WH, "#c69c6d"))
         b.parts_3d.append(Part3D("Left wall", 0, STUD_T, wall_z, STUD_T, D - 2 * STUD_T, WH, "#c69c6d"))
         b.parts_3d.append(Part3D("Right wall", W - STUD_T, STUD_T, wall_z, STUD_T, D - 2 * STUD_T, WH, "#c69c6d"))
@@ -181,29 +194,31 @@ class ShedModel(ProjectModel):
             for yy, label in ((0, "Front gable"), (D - STUD_T, "Back gable")):
                 b.parts_3d.append(Part3D(f"{label} {i+1}", inset, yy, top_z + i * step_h,
                                          width_i, STUD_T, step_h, "#b58b62"))
-        # Pitched roof: stair-stepped slabs climbing to the ridge on both sides
+        # Pitched roof: stair-stepped slabs climbing to the ridge on both sides.
+        # Starts ABOVE the wall top (top_z) so it never cuts into the walls.
         ROOF_STEPS = 8
         step_run = (run + 4) / ROOF_STEPS   # +4" eave overhang
         step_rise = rise / ROOF_STEPS
         roof_t = 1.6
         for i in range(ROOF_STEPS):
             x_off = -4 + i * step_run
-            z_off = top_z - 2 + i * step_rise
+            z_off = top_z + i * step_rise
             # Left slope
             b.parts_3d.append(Part3D(f"Roof L{i+1}", x_off, -2, z_off,
-                                     step_run + 1.5, D + 4, roof_t, "#57534e"))
+                                     step_run + 1.0, D + 4, roof_t, "#57534e"))
             # Right slope (mirror)
-            b.parts_3d.append(Part3D(f"Roof R{i+1}", W - x_off - step_run - 1.5, -2, z_off,
-                                     step_run + 1.5, D + 4, roof_t, "#57534e"))
+            b.parts_3d.append(Part3D(f"Roof R{i+1}", W - x_off - step_run - 1.0, -2, z_off,
+                                     step_run + 1.0, D + 4, roof_t, "#57534e"))
         # Ridge cap
-        b.parts_3d.append(Part3D("Ridge", W / 2 - 2, -2, top_z + rise - 1,
-                                 4, D + 4, 2, "#44403c"))
+        b.parts_3d.append(Part3D("Ridge", W / 2 - 2.5, -2, top_z + rise,
+                                 5, D + 4, 2, "#44403c"))
 
         b.notes.append("Check local building codes — many areas allow sheds under ~120 sq ft permit-free, but always verify.")
         b.notes.append("Set the foundation skids on a level gravel pad. A level shed lasts decades; an unlevel one racks and sags.")
         b.assembly_hints = {
             "width_in": W, "depth_in": D, "wall_height_in": WH,
             "roof_pitch": PITCH, "door_width_in": DOOR_W,
+            "double_door": DOUBLE,
             "n_joists": n_joists, "n_rafter_pairs": n_rafter_pairs,
         }
         return b

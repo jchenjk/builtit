@@ -30,6 +30,7 @@ SEARCH_QUERIES = {
     "lumber.2x6.8ft.spf": "2x6x8 lumber",
     "lumber.2x6.10ft.spf": "2x6x10 lumber",
     "lumber.4x4.8ft.treated": "4x4x8 pressure treated post",
+    "lumber.2x6.8ft.treated": "2x6x8 pressure treated lumber",
     "lumber.1x12.8ft.pine": "1x12x8 pine board",
     "lumber.1x12.6ft.pine": "1x12x6 pine board",
     "lumber.1x4.8ft.pine": "1x4x8 pine board",

@@ -53,7 +53,7 @@
 
   <!-- 3D model showcase -->
   <section id="projects" class="max-w-6xl mx-auto px-5 py-14">
-    <h2 class="text-2xl sm:text-3xl font-extrabold text-center tracking-tight">Six projects, fully customizable</h2>
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-center tracking-tight">Ten projects, fully customizable</h2>
     <p class="text-center text-stone-500 mt-2 mb-10">Real 3D previews — the same models the app generates. Drag to spin them.</p>
     <div class="grid sm:grid-cols-3 gap-6">
       <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
@@ -94,6 +94,38 @@
           <div class="font-bold">Patio Plant Stand</div>
           <div class="text-sm text-stone-500 mt-1">Tiered outdoor stand with slatted shelves.</div>
           <div class="text-sm font-semibold text-orange-600 mt-2 num">~$90–150</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+        <canvas id="m-winerack" class="w-full block cursor-grab" style="height:240px"></canvas>
+        <div class="p-5">
+          <div class="font-bold">Wine Rack</div>
+          <div class="text-sm text-stone-500 mt-1">Horizontal-bottle rack — corks stay wet, cellar style.</div>
+          <div class="text-sm font-semibold text-orange-600 mt-2 num">~$60–110</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+        <canvas id="m-workbench" class="w-full block cursor-grab" style="height:240px"></canvas>
+        <div class="p-5">
+          <div class="font-bold">Workbench</div>
+          <div class="text-sm text-stone-500 mt-1">Double-thick plywood top, lower shelf. Build this first.</div>
+          <div class="text-sm font-semibold text-orange-600 mt-2 num">~$150–220</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+        <canvas id="m-garagerack" class="w-full block cursor-grab" style="height:240px"></canvas>
+        <div class="p-5">
+          <div class="font-bold">Garage Storage Rack</div>
+          <div class="text-sm text-stone-500 mt-1">Heavy-duty 2x4 + plywood shelving for garage or yard.</div>
+          <div class="text-sm font-semibold text-orange-600 mt-2 num">~$150–250</div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+        <canvas id="m-gardenbed" class="w-full block cursor-grab" style="height:240px"></canvas>
+        <div class="p-5">
+          <div class="font-bold">Raised Garden Bed</div>
+          <div class="text-sm text-stone-500 mt-1">Pressure-treated 2x6 courses. One afternoon, decades of tomatoes.</div>
+          <div class="text-sm font-semibold text-orange-600 mt-2 num">~$70–150</div>
         </div>
       </div>
       <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
@@ -191,19 +223,90 @@
   }
 
   function buildShed(g) {
-    const W = 96, H = 84, D = 72, t = 3.5;
+    const W = 96, WH = 60, D = 72, t = 3.5;
+    const rise = W / 2 * 4 / 12, run = W / 2;
     box(g, PANEL, 0, 0, 0, W, 4, D);            // floor
-    box(g, WOOD_LIGHT, 0, 4, 0, W, H - 20, t);  // back wall
-    box(g, WOOD_LIGHT, 0, 4, D - t, W, H - 20, t); // front wall
-    box(g, WOOD_LIGHT, 0, 4, t, t, H - 20, D - 2 * t);      // left wall
-    box(g, WOOD_LIGHT, W - t, 4, t, t, H - 20, D - 2 * t);  // right wall
-    box(g, WOOD_DARK, W / 2 - 12, 4, D - t - 0.5, 24, 40, 2); // door
-    // simple gable roof from two slabs
-    const roof1 = box(g, ROOF, 0, 0, 0, W + 8, 2, D / 2 + 8);
-    roof1.position.set(W / 2, H - 12, D / 4 - 1); roof1.rotation.x = -0.45;
-    const roof2 = box(g, ROOF, 0, 0, 0, W + 8, 2, D / 2 + 8);
-    roof2.position.set(W / 2, H - 12, (3 * D) / 4 + 1); roof2.rotation.x = 0.45;
+    box(g, WOOD_LIGHT, 0, 4, 0, W, WH, t);      // back wall
+    // front wall with door opening
+    const doorW = 30, doorH = WH - 8, dx = (W - doorW) / 2;
+    box(g, WOOD_LIGHT, 0, 4, D - t, dx, WH, t);
+    box(g, WOOD_LIGHT, dx + doorW, 4, D - t, W - dx - doorW, WH, t);
+    box(g, WOOD_LIGHT, dx, 4 + doorH, D - t, doorW, WH - doorH, t);   // header
+    box(g, WOOD_DARK, dx + 1, 4, D - 0.5, doorW - 2, doorH, 1.5);     // door
+    box(g, WOOD_LIGHT, 0, 4, t, t, WH, D - 2 * t);                    // left wall
+    box(g, WOOD_LIGHT, W - t, 4, t, t, WH, D - 2 * t);                // right wall
+    const topY = 4 + WH;
+    // gable ends (stepped)
+    for (let i = 0; i < 5; i++) {
+      const inset = run * i / 5, w = W - 2 * inset;
+      if (w <= 6) continue;
+      box(g, PANEL, inset, topY + i * rise / 5, 0, w, rise / 5, t);
+      box(g, PANEL, inset, topY + i * rise / 5, D - t, w, rise / 5, t);
+    }
+    // stepped pitched roof, sitting on top of the walls
+    const steps = 7, sRun = (run + 4) / steps, sRise = rise / steps;
+    for (let i = 0; i < steps; i++) {
+      box(g, ROOF, -4 + i * sRun, topY + i * sRise, -2, sRun + 1, 2, D + 4);
+      box(g, ROOF, W + 4 - (i + 1) * sRun - 1, topY + i * sRise, -2, sRun + 1, 2, D + 4);
+    }
+    box(g, ROOF, W / 2 - 2.5, topY + rise, -2, 5, 2.5, D + 4); // ridge
+    return [W, topY + rise + 3, D];
+  }
+
+  function buildWinerack(g) {
+    const W = 24, rows = 4, t = 0.75, D = 11, rowH = 4.75;
+    const H = rows * (rowH + t) + t;
+    box(g, WOOD, 0, 0, 0, t, H, D);
+    box(g, WOOD, W - t, 0, 0, t, H, D);
+    const BOTTLE = 0x5b7553;
+    for (let r = 0; r <= rows; r++)
+      box(g, WOOD_LIGHT, t, r * (rowH + t), 0, W - 2 * t, t, D);
+    for (let r = 0; r < rows; r++) {
+      const z = r * (rowH + t) + t;
+      box(g, WOOD_DARK, t, z, 0.25, W - 2 * t, 3.5, 0.75);
+      if (r < 3) for (let i = 0; i < 5; i++)
+        box(g, BOTTLE, t + 0.5 + i * 3.6, z + 0.6, 1.2, 3, 3, D - 2.4);
+    }
     return [W, H, D];
+  }
+
+  function buildWorkbench(g) {
+    const W = 60, D = 24, H = 36, leg = 3.5;
+    for (const [x, z] of [[1,1],[W-leg-1,1],[1,D-leg-1],[W-leg-1,D-leg-1]])
+      box(g, WOOD_DARK, x, 0, z, leg, H - 1.5, leg);
+    box(g, WOOD, 0, H - 5, 0, W, 3.5, 1.5);          // top frame front
+    box(g, WOOD, 0, H - 5, D - 1.5, W, 3.5, 1.5);    // top frame back
+    box(g, WOOD_LIGHT, 0, H - 1.5, 0, W, 1.5, D);    // benchtop
+    box(g, PANEL, 1, 9.5, 1, W - 2, 0.75, D - 2);    // lower shelf
+    return [W, H, D];
+  }
+
+  function buildGaragerack(g) {
+    const W = 72, D = 20, H = 72, t = 1.5, fw = 3.5;
+    for (const x of [0, W / 2 - t / 2, W - t])
+      for (const z of [0, D - fw])
+        box(g, WOOD_DARK, x, 0, z, t, H, fw);
+    for (let s = 0; s < 4; s++) {
+      const y = 6 + s * (H - 10) / 3;
+      box(g, WOOD, 0, y, 0, W, fw, t);
+      box(g, WOOD, 0, y, D - t, W, fw, t);
+      box(g, PANEL, 0, y + fw, 0, W, 0.75, D);
+    }
+    return [W, H, D];
+  }
+
+  function buildGardenbed(g) {
+    const L = 96, W = 48, C = 2, t = 1.5, bw = 5.5;
+    const SOIL = 0x4a3728;
+    for (let c = 0; c < C; c++) {
+      const y = c * bw;
+      box(g, WOOD_DARK, 0, y, 0, L, bw, t);
+      box(g, WOOD_DARK, 0, y, W - t, L, bw, t);
+      box(g, WOOD_DARK, 0, y, t, t, bw, W - 2 * t);
+      box(g, WOOD_DARK, L - t, y, t, t, bw, W - 2 * t);
+    }
+    box(g, SOIL, t, C * bw - 2, t, L - 2 * t, 1.5, W - 2 * t); // soil
+    return [L, C * bw + 6, W];
   }
 
   function viewer(canvasId, builder) {
@@ -298,6 +401,10 @@
   viewer('m-nightstand', buildNightstand);
   viewer('m-bedframe', buildBedframe);
   viewer('m-patio', buildPatioStand);
+  viewer('m-winerack', buildWinerack);
+  viewer('m-workbench', buildWorkbench);
+  viewer('m-garagerack', buildGaragerack);
+  viewer('m-gardenbed', buildGardenbed);
   viewer('m-shed', buildShed);
   </script>
 </body>

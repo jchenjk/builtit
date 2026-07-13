@@ -18,8 +18,13 @@ from .shed import ShedModel
 from .nightstand import NightstandModel
 from .patiostand import PatioStandModel
 from .bedframe import BedFrameModel
+from .winerack import WineRackModel
+from .garagerack import GarageRackModel
+from .workbench import WorkbenchModel
+from .gardenbed import GardenBedModel
 
 ALL_MODELS = {m.id: m for m in [
-    BookshelfModel, DeskModel, NightstandModel,
-    BedFrameModel, PatioStandModel, ShedModel,
+    BookshelfModel, NightstandModel, WineRackModel, DeskModel,
+    BedFrameModel, WorkbenchModel, GarageRackModel,
+    PatioStandModel, GardenBedModel, ShedModel,
 ]}

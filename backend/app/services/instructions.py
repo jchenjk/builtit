@@ -54,6 +54,18 @@ def generate_instructions(project_id: str, build, shopping_list: dict) -> dict:
     elif project_id == "bedframe":
         steps = _bedframe_steps(build, shopping_list)
         tools = COMMON_TOOLS + ["Sander (or sanding block)", "A helper for final assembly"]
+    elif project_id == "winerack":
+        steps = _winerack_steps(build, shopping_list)
+        tools = COMMON_TOOLS + ["Square (for checking 90° corners)"]
+    elif project_id == "garagerack":
+        steps = _garagerack_steps(build, shopping_list)
+        tools = COMMON_TOOLS + ["4-ft level", "Stud finder (for wall anchoring)"]
+    elif project_id == "workbench":
+        steps = _workbench_steps(build, shopping_list)
+        tools = COMMON_TOOLS + ["Straightedge (for flattening the top)"]
+    elif project_id == "gardenbed":
+        steps = _gardenbed_steps(build, shopping_list)
+        tools = COMMON_TOOLS + ["Shovel and wheelbarrow", "4-ft level"]
     else:
         steps = []
         tools = COMMON_TOOLS
@@ -267,6 +279,130 @@ def _bedframe_steps(build, shopping_list) -> list[dict]:
     ]
 
 
+def _winerack_steps(build, shopping_list) -> list[dict]:
+    h = build.assembly_hints
+    return [
+        _step(1, "Cut all parts",
+              f"Cut 2 sides at {h['height_in']:.1f} in., {h['rows'] + 1} shelves and "
+              f"{h['rows'] * 2} rails at {(h['width_in'] - 1.5):.2f} in. Stop-block the "
+              "shelves and rails so they're identical.",
+              est_min=30),
+        _step(2, "Sand everything",
+              "120 then 220 grit. Wine racks get touched constantly — smooth edges matter.",
+              est_min=25),
+        _step(3, "Mark the row spacing",
+              f"On both side panels, mark a line every {4.75 + 0.75:.2f} in. from the bottom — "
+              "that's one shelf + one row of bottles. Clamp the sides together and mark both "
+              "at once so rows can't end up crooked.",
+              est_min=15),
+        _step(4, "Assemble shelves between the sides",
+              "Glue + pre-drill + screw each shelf on its marks, 3 screws per end. Start at the "
+              "bottom and work up, checking square with diagonals as you go.",
+              est_min=30),
+        _step(5, "Add the bottle rails",
+              "Screw a 1x4 rail across the front and back of each row, standing on the shelf "
+              "below. The rails are what stop the bottles rolling out — don't skip the back one.",
+              est_min=25),
+        _step(6, "Finish and load",
+              f"Stain + poly, or leave it raw. Lay bottles on their sides — this rack holds "
+              f"about {h['capacity']} bottles. Keep it out of direct sunlight.",
+              est_min=40),
+    ]
+
+
+def _garagerack_steps(build, shopping_list) -> list[dict]:
+    h = build.assembly_hints
+    return [
+        _step(1, "Cut all parts",
+              f"Cut {h['n_posts']} posts at {h['height_in']:.0f} in., {h['shelves'] * 2} long "
+              f"rails at {h['width_in']:.0f} in., and {h['shelves'] * h['n_cross']} cross "
+              f"supports. Label the shelf heights on the posts as you go.",
+              est_min=40),
+        _step(2, "Mark shelf heights on all posts",
+              "Clamp the posts together and mark every shelf height across all of them at once. "
+              "Bottom shelf ~6 in. off the floor, the rest evenly spaced.",
+              est_min=15),
+        _step(3, "Build the shelf frames",
+              f"Each shelf = 2 long rails + {h['n_cross']} cross supports at 16 in. on center, "
+              "screwed with two 3 in. deck screws per joint. Build them all before assembly.",
+              est_min=45),
+        _step(4, "Attach frames to the posts",
+              "Lay two posts flat, screw the frame ends on at the marks, then stand it up and "
+              "add the remaining posts. A second person (or a clamp) makes this 10x easier. "
+              "Check level before final tightening.",
+              est_min=45),
+        _step(5, "Screw down the decks",
+              "Drop the plywood decks onto the frames and screw down every 12 in. around the "
+              "edges and into the cross supports.",
+              est_min=25),
+        _step(6, "Anchor to the wall",
+              "If the rack stands against a wall, drive two 3 in. screws through the back posts "
+              "into wall studs. A loaded rack must never be able to tip.",
+              est_min=15),
+    ]
+
+
+def _workbench_steps(build, shopping_list) -> list[dict]:
+    h = build.assembly_hints
+    return [
+        _step(1, "Cut all parts",
+              f"Cut 4 legs at {h['leg_height_in']:.2f} in., the top frame rails and "
+              f"{h['n_cross']} cross members, the lower rails, and two plywood top layers at "
+              f"{h['width_in']:.0f} x {h['depth_in']:.0f} in.",
+              est_min=40),
+        _step(2, "Build the top frame",
+              f"Screw the {h['n_cross']} cross members between the two long rails at 16 in. on "
+              "center — like a little floor. Two 3 in. screws per joint.",
+              est_min=25),
+        _step(3, "Attach the legs",
+              "Clamp each leg into a corner of the top frame, flush with the top edge, and drive "
+              "4 screws in a square pattern. Glue makes it permanent.",
+              est_min=25),
+        _step(4, "Add the lower rails" + (" and shelf" if h["lower_shelf"] else ""),
+              "Connect the legs ~6 in. off the floor with the lower rails — this is what makes "
+              "the bench rock-solid."
+              + (" Drop in the lower shelf and screw it to the rails." if h["lower_shelf"] else ""),
+              est_min=25),
+        _step(5, "Laminate the top",
+              "Glue the two plywood layers face-to-face and screw from underneath with 1-1/4 in. "
+              "screws in a grid — screws go up through the first layer into the second, so no "
+              "screw heads on the work surface. Screw the finished slab to the top frame.",
+              est_min=30),
+        _step(6, "Flatten and finish",
+              "Check the top with a straightedge. Sand it smooth, ease the edges, and wipe on a "
+              "coat of oil or poly if you want it to shrug off glue drips.",
+              est_min=30),
+    ]
+
+
+def _gardenbed_steps(build, shopping_list) -> list[dict]:
+    h = build.assembly_hints
+    return [
+        _step(1, "Cut the boards and posts",
+              f"Cut {h['courses'] * 2} long boards at {h['length_in']:.0f} in., "
+              f"{h['courses'] * 2} short boards, and 4 corner posts at {h['height_in']:.1f} in. "
+              "Pressure-treated dust is nasty — cut outside and wear a mask.",
+              est_min=25),
+        _step(2, "Build the first course",
+              "On flat ground, screw the first course of boards into the corner posts — 3 deck "
+              "screws per board end. Check the diagonals for square.",
+              est_min=20),
+        _step(3, "Stack the remaining courses",
+              "Stack each additional course on top, screwing into the same posts. Stagger "
+              "nothing — the posts do the work.",
+              est_min=15),
+        _step(4, "Place and level the bed",
+              "Move the bed to its final spot (grass is fine). Level it by trenching under the "
+              "high sides — a level bed waters evenly. Lay cardboard across the bottom to "
+              "smother the grass.",
+              est_min=30),
+        _step(5, "Fill it",
+              f"Fill with ~{h['soil_cuft']:.0f} cu ft of raised-bed soil mix, watering lightly "
+              "as you go so it settles. Leave an inch or two below the rim to keep mulch in.",
+              est_min=45),
+    ]
+
+
 def _shed_steps(build, shopping_list) -> list[dict]:
     h = build.assembly_hints
     return [
@@ -315,10 +451,15 @@ def _shed_steps(build, shopping_list) -> list[dict]:
               "row by ~4 in. Then install shingles from the bottom up, staggering joints. Use 4 "
               "roofing nails per shingle.",
               est_min=240),
-        _step(10, "Build and hang the door",
-              f"Build the door from a 2x4 frame ({h['door_width_in']:.0f} in. wide) sheathed with "
-              "OSB. Install hinges on the door, then hang it in the rough opening. Add a handle "
-              "and latch.",
+        _step(10, "Build and hang the door" + ("s" if h.get("double_door") else ""),
+              (f"Build two door leaves, each about {(h['door_width_in'] - 1) / 2:.0f} in. wide: "
+               "a 2x4 frame with a diagonal brace, sheathed with OSB. Hang each leaf on 4 hinges, "
+               "meeting at the center with a small gap. Add handles and a latch or cane bolt."
+               if h.get("double_door") else
+               f"Build the door from a 2x4 frame ({h['door_width_in']:.0f} in. wide) with a "
+               "diagonal brace, sheathed with OSB. The brace runs from the bottom hinge corner "
+               "up to the opposite corner — it stops the door sagging. Hang it on 4 hinges, "
+               "then add a handle and latch."),
               est_min=120),
         _step(11, "Trim, paint, and call it done",
               "Add 1x4 corner trim and trim around the door for a finished look. Prime and paint "
